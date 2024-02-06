@@ -1,6 +1,21 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using ibay.Services;
 
-app.MapGet("/", () => "Hello World!");
+namespace ibay;
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.Run();
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddTransient<IIbay, IbayEfService>();
+        
+        
+        var app = builder.Build();
+
+        app.MapGet("/", () => "Hello World!");
+        app.MapControllers();
+        app.Run();
+    }
+}

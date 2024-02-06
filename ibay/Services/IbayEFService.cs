@@ -2,7 +2,7 @@
 
 namespace ibay.Services;
 
-public class IbayEfService
+public class IbayEfService : IIbay
 {
     private IbayContext ibayContext;
 
@@ -49,12 +49,13 @@ public class IbayEfService
     
     public Guid CreateUser(User user)
     {
-        user.Id = Guid.NewGuid();
-        
-        this.ibayContext.Users.Add(user);
-        this.ibayContext.SaveChanges();
+            user.Id = Guid.NewGuid();
+            user.Role = "user";
 
-        return user.Id;
+            this.ibayContext.Users.Add(user);
+            this.ibayContext.SaveChanges();
+
+            return user.Id;
     }
 
     public User GetUserById(Guid id)
@@ -66,7 +67,7 @@ public class IbayEfService
     {
         var tempUser = this.ibayContext.Users.FirstOrDefault(x => x.Id == id);
         if (tempUser == null) throw new Exception("The User does not exists");
-        user.Id = id;
+        user.Role = tempUser.Role;
 
         this.ibayContext.Users.Remove(tempUser);
         this.ibayContext.Users.Add(user);
@@ -79,6 +80,11 @@ public class IbayEfService
 
         this.ibayContext.Remove(user);
         this.ibayContext.SaveChanges();
+    }
+
+    public List<User> GetUsers(int limit)
+    {
+        return null;
     }
 
 

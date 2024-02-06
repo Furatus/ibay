@@ -5,11 +5,14 @@ namespace ibay.Services
 
     public interface IIbay
     {
-        public List<User> GetUsers();
-        public User GetUserById(int id);
-        public int CreateUser(User user);
-        public void UpdateUser(int id, User user);
-        public void RemoveUser(int id);
-
+        public Guid CreateUser(User user);
+        public List<User> GetUsers(int limit);
+        public User GetUserById(Guid id);
+        public void UpdateUser(Guid id, User user);
+        public void DeleteUser(Guid id);
+        Guid CreateProduct(Product product);
+        Product GetProductById(Guid id);
+        public void UpdateProduct(Guid id, Product product);
+        public void DeleteProduct(Guid id);
     }
 }

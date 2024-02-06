@@ -7,7 +7,7 @@ using ibay.Services;
 
 namespace ibay.Controllers
 {
-    [Route("api/user/")]
+    [Route("/api/user/")]
     [ApiController]
     [ExecutedReqFilter]
 
@@ -18,15 +18,16 @@ namespace ibay.Controllers
         [ProducesResponseType(400)]
         [Route("getall")]
         [EnableCors("MyCustomPolicy")]
-        public IActionResult Get(IIbay ibay)
+        public IActionResult Get(IIbay ibay, [FromBody] int limit)
         {
-            return Ok(ibay.GetUsers());
+            return Ok(ibay.GetUsers(limit));
         }
 
         [HttpGet]
         [Route("getby")]
-        public IActionResult Get(IIbay ibay, int id)
+        public IActionResult Get(IIbay ibay, [FromBody] ItemId itemId)
         {
+            var id = itemId.Id;
             var User = ibay.GetUserById(id);
             if (User == null) { return NotFound($"L'étudiant d'id {id} n'a pas été trouvé"); }
 
@@ -51,17 +52,18 @@ namespace ibay.Controllers
 
         [HttpPut]
         [Route("update")]
-        public IActionResult Put(IIbay ibay, int id, [FromBody] User User)
+        public IActionResult Put(IIbay ibay, [FromBody] User User)
         {
-            ibay.UpdateUser(id, User);
+            ibay.UpdateUser(User.Id, User);
             return Ok();
         }
 
         [HttpDelete]
         [Route("delete")]
-        public IActionResult Delete(IIbay ibay, int id)
+        public IActionResult Delete(IIbay ibay, [FromBody] ItemId itemId)
         {
-            ibay.RemoveUser(id);
+            var id = itemId.Id;
+            ibay.DeleteUser(id);
             return Ok();
         }
 
