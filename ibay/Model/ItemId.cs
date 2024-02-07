@@ -6,5 +6,5 @@ public class ItemId
 {
     [Key]
     [Required]
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
 }
