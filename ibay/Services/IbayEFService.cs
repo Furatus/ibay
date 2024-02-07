@@ -113,7 +113,20 @@ public class IbayEfService : IIbay
 
     public IQueryable<Product> SearchProducts(ProductSearch search)
     {
-        return null;
+        if (search.Available == null && search.Name == null && search.Price == null)
+        {
+            return this.ibayContext.Products.Take(search.Limit);
+        }
+
+        IQueryable<Product> query = this.ibayContext.Products;
+        
+        if (search.Available.HasValue) query = query.Where(p => p.Available == search.Available.Value);
+
+        if (!string.IsNullOrEmpty(search.Name)) query = query.Where(p => p.Name.Contains(search.Name));
+
+        if (search.Price.HasValue) query = query.Where(p => p.Price == search.Price.Value);
+
+        return query;
     }
 
     public void addToCart(Guid userId, Guid productId) {

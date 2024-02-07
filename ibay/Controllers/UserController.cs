@@ -77,6 +77,13 @@ namespace ibay.Controllers
         }
 
         [HttpGet]
+        [Route("search")]
+        public IActionResult Get(IIbay ibay, [FromQuery] ProductSearch search)
+        {
+            return Ok(ibay.SearchProducts(search));
+        }
+
+        [HttpGet]
         [Route("getby")]
         public IActionResult Get(IIbay ibay, [FromQuery] ItemId itemId)
         {
