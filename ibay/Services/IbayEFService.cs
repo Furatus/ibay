@@ -1,4 +1,7 @@
 ﻿using ibay.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.Linq.Dynamic.Core;
 
 namespace ibay.Services;
 
@@ -15,12 +18,19 @@ public class IbayEfService : IIbay
 
     public Guid CreateProduct(Product product)
     {
-        product.Id = Guid.NewGuid();
-        
-        this.ibayContext.Products.Add(product);
-        this.ibayContext.SaveChanges();
+        try
+        {
+            product.Id = Guid.NewGuid();
+            product.AddedTime = product.AddedTime.ToUniversalTime();
+            this.ibayContext.Products.Add(product);
+            this.ibayContext.SaveChanges();
 
-        return product.Id;
+            return product.Id;
+        }
+        catch (Exception e)
+        {
+            throw e.InnerException;
+        }
     }
 
     public Product GetProductById(Guid id)
@@ -82,11 +92,29 @@ public class IbayEfService : IIbay
         this.ibayContext.SaveChanges();
     }
 
-    public List<User> GetUsers(int limit)
+    public IQueryable<Product> GetProducts(ProductSorting sorting)
+    {
+        if (sorting.SortBy == null || sorting.SortBy == "") return this.ibayContext.Products.Take(sorting.Limit);
+        
+        List<string> validColumns = new List<string> { "Date", "Name", "Price" };
+        
+        if (!validColumns.Contains(sorting.SortBy))
+        {
+            throw new Exception("Invalid column for sorting");
+        }
+        
+        string orderByExpression = $"{sorting.SortBy} {(sorting.Order == 1 ? "ascending" : "descending")}";
+        
+        var query = this.ibayContext.Products.AsQueryable().OrderBy(orderByExpression).Take(sorting.Limit);
+
+        return query;
+        
+    }
+
+    public IQueryable<Product> SearchProducts(ProductSearch search)
     {
         return null;
     }
-
 
     public void addToCart(Guid userId, Guid productId) {
         

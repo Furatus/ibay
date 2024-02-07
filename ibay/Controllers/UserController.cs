@@ -14,22 +14,12 @@ namespace ibay.Controllers
     public class UserController: ControllerBase
     {
         [HttpGet]
-        [Produces("application/json")]
-        [ProducesResponseType(400)]
-        [Route("getall")]
-        [EnableCors("MyCustomPolicy")]
-        public IActionResult Get(IIbay ibay, [FromBody] int limit)
-        {
-            return Ok(ibay.GetUsers(limit));
-        }
-
-        [HttpGet]
         [Route("getby")]
-        public IActionResult Get(IIbay ibay, [FromBody] ItemId itemId)
+        public IActionResult Get(IIbay ibay, [FromQuery] ItemId itemId)
         {
             var id = itemId.Id;
             var User = ibay.GetUserById(id);
-            if (User == null) { return NotFound($"L'étudiant d'id {id} n'a pas été trouvé"); }
+            if (User == null) { return NotFound($"User id : {id} not found"); }
 
             return Ok(User);
         }
@@ -64,6 +54,69 @@ namespace ibay.Controllers
         {
             var id = itemId.Id;
             ibay.DeleteUser(id);
+            return Ok();
+        }
+
+
+        
+    }
+
+    [Route("/api/product/")]
+    [ApiController]
+    [ExecutedReqFilter]
+    public class ProductController : ControllerBase
+    {
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(400)]
+        [Route("getall")]
+        [EnableCors("MyCustomPolicy")]
+        public IActionResult Get(IIbay ibay, [FromQuery] ProductSorting sorting)
+        {
+            return Ok(ibay.GetProducts(sorting));
+        }
+
+        [HttpGet]
+        [Route("getby")]
+        public IActionResult Get(IIbay ibay, [FromQuery] ItemId itemId)
+        {
+            var id = itemId.Id;
+            var Product = ibay.GetProductById(id);
+            if (Product == null) { return NotFound($"Product Id : {id} not found"); }
+
+            return Ok(Product);
+        }
+
+        [HttpPost]
+        [Route("new")]
+        public IActionResult Post(IIbay ibay, [FromBody] Product product)
+        {
+            try
+            {
+                var id = ibay.CreateProduct(product);
+
+                return Created($"/api/stud/{id}", id);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("update")]
+        public IActionResult Put(IIbay ibay, [FromBody] Product product)
+        {
+            ibay.UpdateProduct(product.Id, product);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("delete")]
+        public IActionResult Delete(IIbay ibay, [FromBody] ItemId itemId)
+        {
+            var id = itemId.Id;
+            ibay.DeleteProduct(id);
             return Ok();
         }
 
