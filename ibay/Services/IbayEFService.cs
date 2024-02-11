@@ -21,7 +21,7 @@ public class IbayEfService : IIbay
         try
         {
             product.Id = Guid.NewGuid();
-            product.AddedTime = product.AddedTime.ToUniversalTime();
+            product.AddedTime = DateTime.Now.ToUniversalTime();//product.AddedTime.ToUniversalTime();
             this.ibayContext.Products.Add(product);
             this.ibayContext.SaveChanges();
 
