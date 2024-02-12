@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using ibay.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +31,17 @@ public class Program
             };
         });
         
+        builder.Services.AddSwaggerGen(c =>
+            {
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+                {
+                    Version = "v1",
+                    Title = "Ibay Api"
+                });
+            });
         
         builder.Services.AddCors(c =>
         {
@@ -45,6 +57,12 @@ public class Program
 
         app.MapGet("/", () => "Hello World!");
         app.UseCors();
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ibay V1");
+            c.RoutePrefix = "swagger";
+        });
         app.MapControllers();
         app.Run();
     }

@@ -6,17 +6,23 @@ using ibay.Filters;
 using ibay.Services;
 using Microsoft.AspNetCore.Authorization;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
+using Swashbuckle.AspNetCore.Annotations;
 
 
 namespace ibay.Controllers
 {
     [Route("/api/user/")]
+    [SwaggerResponse(400, "Mauvaise requête", null)]
+    [SwaggerResponse(405, "Méthode non autorisée", null)]
+    [SwaggerResponse(500, "Erreur Interne", null)]
     [ApiController]
     [ExecutedReqFilter]
 
     public class UserController : ControllerBase
     {
         [HttpGet]
+        [SwaggerResponse(404, "Utilisateur non trouvé", null)]
+        [SwaggerResponse(200, "ok", typeof(User))]
         [Route("getby")]
         public IActionResult Get(IIbay ibay, [FromQuery] ItemId itemId)
         {
@@ -31,6 +37,7 @@ namespace ibay.Controllers
         }
 
         [HttpPost]
+        [SwaggerResponse(200, "ok", typeof(Guid))]
         [Route("new")]
         public IActionResult Post(IIbay ibay, [FromBody] User User)
         {
@@ -48,6 +55,9 @@ namespace ibay.Controllers
 
         [HttpPut]
         [Route("update")]
+        [SwaggerResponse(404, "Utilisateur non trouvé", null)]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         public IActionResult Put(IIbay ibay, [FromBody] User user)
         {
@@ -59,6 +69,9 @@ namespace ibay.Controllers
 
         [HttpDelete]
         [Route("delete")]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(404, "Utilisateur non trouvé", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         public IActionResult Delete(IIbay ibay, [FromBody] ItemId itemId)
         {
@@ -74,6 +87,9 @@ namespace ibay.Controllers
     }
 
     [Route("/api/product/")]
+    [SwaggerResponse(400, "Mauvaise requête", null)]
+    [SwaggerResponse(405, "Méthode non autorisée", null)]
+    [SwaggerResponse(500, "Erreur Interne", null)]
     [ApiController]
     [ExecutedReqFilter]
     public class ProductController : ControllerBase
@@ -81,6 +97,7 @@ namespace ibay.Controllers
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(400)]
+        [SwaggerResponse(200, "ok", typeof(Product[]))]
         [Route("getall")]
         [EnableCors("MyCustomPolicy")]
         public IActionResult Get(IIbay ibay, [FromQuery] ProductSorting sorting)
@@ -89,6 +106,7 @@ namespace ibay.Controllers
         }
 
         [HttpGet]
+        [SwaggerResponse(200, "ok", typeof(Product[]))]
         [Route("search")]
         public IActionResult Get(IIbay ibay, [FromQuery] ProductSearch search)
         {
@@ -96,6 +114,8 @@ namespace ibay.Controllers
         }
 
         [HttpGet]
+        [SwaggerResponse(404, "Produit non trouvé", null)]
+        [SwaggerResponse(200, "ok", typeof(Product))]
         [Route("getby")]
         public IActionResult Get(IIbay ibay, [FromQuery] ItemId itemId)
         {
@@ -111,6 +131,8 @@ namespace ibay.Controllers
 
         [HttpPost]
         [Route("new")]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", typeof(Guid))]
         [Authorize]
         public IActionResult Post(IIbay ibay, [FromBody] Product product)
         {
@@ -131,6 +153,9 @@ namespace ibay.Controllers
 
         [HttpPut]
         [Route("update")]
+        [SwaggerResponse(404, "Produit non trouvé.", null)]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         public IActionResult Put(IIbay ibay, [FromBody] Product product)
         {
@@ -152,6 +177,9 @@ namespace ibay.Controllers
 
         [HttpDelete]
         [Route("delete")]
+        [SwaggerResponse(404, "Produit non trouvé.", null)]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         public IActionResult Delete(IIbay ibay, [FromBody] ItemId itemId)
         {
@@ -177,12 +205,18 @@ namespace ibay.Controllers
     }
 
     [Route("/api/cart/")]
+    [SwaggerResponse(400, "Mauvaise requête", null)]
+    [SwaggerResponse(405, "Méthode non autorisée", null)]
+    [SwaggerResponse(500, "Erreur Interne", null)]
     [ApiController]
     [ExecutedReqFilter]
 
     public class CartController : ControllerBase
     {
         [HttpPost]
+        [SwaggerResponse(404, "Produit non trouvé.", null)]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         [Route("add")]
 
@@ -195,6 +229,9 @@ namespace ibay.Controllers
         }
         
         [HttpDelete]
+        [SwaggerResponse(404, "Produit non trouvé.", null)]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         [Route("remove")]
 
@@ -206,6 +243,8 @@ namespace ibay.Controllers
         }
         
         [HttpDelete]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         [Route("empty")]
         public IActionResult EmptyCart(IIbay ibay)
@@ -216,6 +255,8 @@ namespace ibay.Controllers
         }
         
         [HttpPost]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Authorize]
         [Route("pay")]
         public IActionResult PayCart(IIbay ibay)
@@ -227,6 +268,8 @@ namespace ibay.Controllers
         
         [HttpGet]
         [Authorize]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", null)]
         [Route("list")]
         public IActionResult GetCartItems(IIbay ibay)
         {
@@ -242,6 +285,8 @@ namespace ibay.Controllers
     public class AuthController : ControllerBase
     {
         [HttpPost]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", typeof(string))]
         [Route("login")]
         public IActionResult Login(IJwtAuthService jwtAuthService, [FromBody] LoginModel login)
         {
