@@ -89,7 +89,7 @@ namespace ibay.Controllers
         [SwaggerResponse(404, "Utilisateur non trouvé", null)]
         [SwaggerResponse(200, "ok", null)]
         [Authorize]
-        public IActionResult Delete(IIbay ibay, [FromBody] ItemId itemId)
+        public IActionResult Delete(IIbay ibay, [FromQuery] ItemId itemId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId != itemId.Id.ToString()) return Unauthorized("You are not allowed to delete other users");
@@ -197,7 +197,7 @@ namespace ibay.Controllers
         [SwaggerResponse(401, "Non Autorisé.", null)]
         [SwaggerResponse(200, "ok", null)]
         [Authorize]
-        public IActionResult Delete(IIbay ibay, [FromBody] ItemId itemId)
+        public IActionResult Delete(IIbay ibay, [FromQuery] ItemId itemId)
         {
             var id = itemId.Id;
             var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -251,7 +251,7 @@ namespace ibay.Controllers
         [Authorize]
         [Route("remove")]
 
-        public IActionResult remove(IIbay ibay, [FromBody] ItemId cart)
+        public IActionResult remove(IIbay ibay, [FromQuery] ItemId cart)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             ibay.RemoveFromCart(userId,cart.Id);
