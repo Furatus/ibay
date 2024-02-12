@@ -7,6 +7,7 @@ namespace ibay.Services
     {
         public Guid CreateUser(User user);
         public User GetUserById(Guid id);
+        public User GetUserByName(string username);
         public void UpdateUser(Guid id, User user);
         public void DeleteUser(Guid id);
         Guid CreateProduct(Product product);

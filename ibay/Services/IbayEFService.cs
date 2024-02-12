@@ -58,6 +58,7 @@ public class IbayEfService : IIbay
     
     public Guid CreateUser(User user)
     {
+        if (GetUserByName(user.Username) != null) throw new Exception("The User Already Exists");
             user.Id = Guid.NewGuid();
             user.Role = "user";
 
@@ -70,6 +71,11 @@ public class IbayEfService : IIbay
     public User GetUserById(Guid id)
     {
         return this.ibayContext.Users.FirstOrDefault(x => x.Id == id);
+    }
+    
+    public User GetUserByName(string username)
+    {
+        return this.ibayContext.Users.FirstOrDefault(u => u.Username == username);
     }
 
     public void UpdateUser(Guid id, User user)
