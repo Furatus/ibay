@@ -39,7 +39,7 @@ namespace ibay.Controllers
         [HttpGet]
         [SwaggerResponse(404, "Utilisateur non trouvé", null)]
         [SwaggerResponse(200, "ok", typeof(User))]
-        [Route("getby/id")]
+        [Route("getby/username")]
         public IActionResult GetByName(IIbay ibay, [FromQuery] Username username)
         {
             var name = username.Name;
