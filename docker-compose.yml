@@ -34,4 +34,6 @@ services:
 
 networks:
     ibay_network:
-      
+    
+volumes:
+    db-data:
