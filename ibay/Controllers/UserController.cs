@@ -23,7 +23,7 @@ namespace ibay.Controllers
         [HttpGet]
         [SwaggerResponse(404, "Utilisateur non trouvé", null)]
         [SwaggerResponse(200, "ok", typeof(User))]
-        [Route("getby")]
+        [Route("getby/id")]
         public IActionResult Get(IIbay ibay, [FromQuery] ItemId itemId)
         {
             var id = itemId.Id;
@@ -31,6 +31,22 @@ namespace ibay.Controllers
             if (User == null)
             {
                 return NotFound($"User id : {id} not found");
+            }
+
+            return Ok(User);
+        }
+        
+        [HttpGet]
+        [SwaggerResponse(404, "Utilisateur non trouvé", null)]
+        [SwaggerResponse(200, "ok", typeof(User))]
+        [Route("getby/id")]
+        public IActionResult GetByName(IIbay ibay, [FromQuery] Username username)
+        {
+            var name = username.Name;
+            var User = ibay.GetUserByName(name);
+            if (User == null)
+            {
+                return NotFound($"User name : {name} not found");
             }
 
             return Ok(User);
