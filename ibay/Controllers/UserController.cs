@@ -304,5 +304,27 @@ namespace ibay.Controllers
             return Ok(token);
         }
     }
+    
+    [Route("/api/upgrade/")]
+    [ApiController]
+    [ExecutedReqFilter]
+    public class UpgradeController : ControllerBase
+    {
+        [HttpPost]
+        [SwaggerResponse(401, "Non Autorisé.", null)]
+        [SwaggerResponse(200, "ok", typeof(string))]
+        [Authorize]
+        [Route("seller")]
+        public IActionResult UpgradeToSeller (IIbay ibay, [FromBody] ItemId id)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId != id.Id.ToString()) return Unauthorized("You are not allowed to modify other users");
+            var user = ibay.GetUserById(id.Id);
+            user.Role = "seller";
+            ibay.UpdateUser(id.Id, user);
+
+            return Ok(userId + " updated to seller");
+        }
+    }
 }
     
