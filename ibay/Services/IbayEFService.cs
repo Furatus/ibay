@@ -42,9 +42,13 @@ public class IbayEfService : IIbay
     {
         var existingProduct = this.ibayContext.Products.FirstOrDefault(x => x.Id == id);
         if (existingProduct == null) throw new Exception("The Product does not exists");
-        product.Id = id;
 
-        this.ibayContext.Products.Update(product);
+        if (product.Name != null) existingProduct.Name = product.Name;
+        if (product.Image != null) existingProduct.Image = product.Image;
+        if (product.Price != null) existingProduct.Price = product.Price;
+        if (product.Available != null) existingProduct.Available = product.Available;
+
+        this.ibayContext.Products.Update(existingProduct);
         this.ibayContext.SaveChanges();
     }
 
@@ -82,10 +86,17 @@ public class IbayEfService : IIbay
     {
         var tempUser = this.ibayContext.Users.FirstOrDefault(x => x.Id == id);
         if (tempUser == null) throw new Exception("The User does not exists");
-        user.Id = id;
-        user.Role = tempUser.Role;
 
-        this.ibayContext.Users.Update(user);
+        if (user.Username != null)
+        {
+            if (GetUserByName(user.Username) != null) throw new Exception("The username already exists");
+            tempUser.Username = user.Username;
+        }
+
+        if (user.Password != null) tempUser.Password = user.Password;
+        if (user.Email != null) tempUser.Email = user.Email;
+
+        this.ibayContext.Users.Update(tempUser);
         this.ibayContext.SaveChanges();
     }
 
