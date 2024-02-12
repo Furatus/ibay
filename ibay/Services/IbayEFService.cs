@@ -40,12 +40,11 @@ public class IbayEfService : IIbay
 
     public void UpdateProduct(Guid id, Product product)
     {
-        var tempProduct = this.ibayContext.Products.FirstOrDefault(x => x.Id == id);
-        if (tempProduct == null) throw new Exception("The Product does not exists");
+        var existingProduct = this.ibayContext.Products.FirstOrDefault(x => x.Id == id);
+        if (existingProduct == null) throw new Exception("The Product does not exists");
         product.Id = id;
 
-        this.ibayContext.Products.Remove(tempProduct);
-        this.ibayContext.Products.Add(product);
+        this.ibayContext.Products.Update(product);
         this.ibayContext.SaveChanges();
     }
 
@@ -77,10 +76,10 @@ public class IbayEfService : IIbay
     {
         var tempUser = this.ibayContext.Users.FirstOrDefault(x => x.Id == id);
         if (tempUser == null) throw new Exception("The User does not exists");
+        user.Id = id;
         user.Role = tempUser.Role;
 
-        this.ibayContext.Users.Remove(tempUser);
-        this.ibayContext.Users.Add(user);
+        this.ibayContext.Users.Update(user);
         this.ibayContext.SaveChanges();
     }
 
@@ -182,5 +181,15 @@ public class IbayEfService : IIbay
             .ToList();
 
         return productsInCart;
+    }
+    
+    public void UpdateUserToSeller(Guid id, User user)
+    {
+        var tempUser = this.ibayContext.Users.FirstOrDefault(x => x.Id == id);
+        if (tempUser == null) throw new Exception("The User does not exists");
+        user.Id = id;
+
+        this.ibayContext.Users.Update(user);
+        this.ibayContext.SaveChanges();
     }
 }

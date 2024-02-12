@@ -262,7 +262,7 @@ namespace ibay.Controllers
         public IActionResult PayCart(IIbay ibay)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            ibay.EmptyCart(userId);
+            ibay.PayCart(userId);
             return Ok();
         }
         
@@ -321,7 +321,7 @@ namespace ibay.Controllers
             if (userId != id.Id.ToString()) return Unauthorized("You are not allowed to modify other users");
             var user = ibay.GetUserById(id.Id);
             user.Role = "seller";
-            ibay.UpdateUser(id.Id, user);
+            ibay.UpdateUserToSeller(id.Id, user);
 
             return Ok(userId + " updated to seller");
         }

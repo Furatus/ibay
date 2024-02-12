@@ -21,5 +21,7 @@ namespace ibay.Services
         public void PayCart(string userId);
 
         public List<Product> GetCartItems(string userId);
+
+        public void UpdateUserToSeller(Guid id, User user);
     }
 }
