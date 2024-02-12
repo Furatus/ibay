@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace ibaycli
@@ -14,82 +15,92 @@ namespace ibaycli
 
         static void Main()
         {
-            Console.WriteLine("Bienvenue dans l'application iBay CLI !");
-            Console.WriteLine("Saisissez une commande (login, addtocart, removefromcart, emptycart, pay, listcart, getallproducts, searchproducts, getproductbyid, newproduct, updateproduct, deleteproduct, getuserbyid, newuser, updateuser, deleteuser) :");
-            string userInput = Console.ReadLine().ToLower();
-
-            switch (userInput)
+            do
             {
-                case "login":
-                    RunLoginAsync().GetAwaiter().GetResult();
-                    break;
+                Console.WriteLine("Bienvenue dans l'application iBay CLI !");
+                Console.WriteLine("Saisissez une commande (login,logout, addtocart, removefromcart, emptycart, pay, listcart, getallproducts, searchproducts, getproductbyid, newproduct, updateproduct, deleteproduct, getuserbyid, newuser, updateuser, deleteuser, exit) :");
+                string userInput = Console.ReadLine().ToLower();
 
-                case "addtocart":
-                    RunAddToCartAsync().GetAwaiter().GetResult();
-                    break;
+                switch (userInput)
+                {
+                    case "login":
+                        RunLoginAsync().GetAwaiter().GetResult();
+                        break;
+                    case "logout":
+                        RunLogoutAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "removefromcart":
-                    RunRemoveFromCartAsync().GetAwaiter().GetResult();
-                    break;
+                    case "addtocart":
+                        RunAddToCartAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "emptycart":
-                    RunEmptyCartAsync().GetAwaiter().GetResult();
-                    break;
+                    case "removefromcart":
+                        RunRemoveFromCartAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "pay":
-                    RunPayAsync().GetAwaiter().GetResult();
-                    break;
+                    case "emptycart":
+                        RunEmptyCartAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "listcart":
-                    RunListCartAsync().GetAwaiter().GetResult();
-                    break;
+                    case "pay":
+                        RunPayAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "getallproducts":
-                    RunGetAllProductsAsync().GetAwaiter().GetResult();
-                    break;
+                    case "listcart":
+                        RunListCartAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "searchproducts":
-                    RunSearchProductsAsync().GetAwaiter().GetResult();
-                    break;
+                    case "getallproducts":
+                        RunGetAllProductsAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "getproductbyid":
-                    RunGetProductByIdAsync().GetAwaiter().GetResult();
-                    break;
+                    case "searchproducts":
+                        RunSearchProductsAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "newproduct":
-                    RunNewProductAsync().GetAwaiter().GetResult();
-                    break;
+                    case "getproductbyid":
+                        RunGetProductByIdAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "updateproduct":
-                    RunUpdateProductAsync().GetAwaiter().GetResult();
-                    break;
+                    case "newproduct":
+                        RunNewProductAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "deleteproduct":
-                    RunDeleteProductAsync().GetAwaiter().GetResult();
-                    break;
+                    case "updateproduct":
+                        RunUpdateProductAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "getuserbyid":
-                    RunGetUserByIdAsync().GetAwaiter().GetResult();
-                    break;
+                    case "deleteproduct":
+                        RunDeleteProductAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "newuser":
-                    RunNewUserAsync().GetAwaiter().GetResult();
-                    break;
+                    case "getuserbyid":
+                        RunGetUserByIdAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "updateuser":
-                    RunUpdateUserAsync().GetAwaiter().GetResult();
-                    break;
+                    case "newuser":
+                        RunNewUserAsync().GetAwaiter().GetResult();
+                        break;
 
-                case "deleteuser":
-                    RunDeleteUserAsync().GetAwaiter().GetResult();
-                    break;
+                    case "updateuser":
+                        RunUpdateUserAsync().GetAwaiter().GetResult();
+                        break;
 
-                default:
-                    Console.WriteLine("Commande invalide. Veuillez saisir une commande valide.");
-                    break;
-            }
+                    case "deleteuser":
+                        RunDeleteUserAsync().GetAwaiter().GetResult();
+                        break;
 
-            Console.ReadLine();
+                    case "exit":
+                        Console.WriteLine("Merci d'avoir utilisé iBay CLI. Au revoir !");
+                        return;
+
+                    default:
+                        Console.WriteLine("Commande invalide. Veuillez saisir une commande valide.");
+                        break;
+                }
+
+                Console.WriteLine("Appuyez sur une touche pour continuer ou tapez 'exit' pour quitter.");
+            } while (Console.ReadLine().ToLower() != "exit");
         }
         
 
@@ -122,7 +133,12 @@ namespace ibaycli
                 return false;
             }
         }
-
+        
+        static async Task RunLogoutAsync()
+        {
+            Console.WriteLine("Déconnexion réussie !");
+            File.Delete("jeton.txt");
+        }
         
 
         static async Task RunAddToCartAsync()
@@ -148,21 +164,29 @@ namespace ibaycli
         {
             string jwtContent = File.ReadAllText("jeton.txt");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtContent);
-            
-            Console.WriteLine("Saisissez le nom du produit à retirer du panier :");
-            string productName = Console.ReadLine();
-            
-            var removeFromCartModel = new { productName };
-            var response = await client.DeleteAsync($"{baseurl}/api/cart/remove?productName={productName}");
-            if (response.IsSuccessStatusCode)
+
+            Console.WriteLine("Saisissez l'id du produit à retirer du panier :");
+            Guid id;
+            if (Guid.TryParse(Console.ReadLine(), out id))
             {
-                Console.WriteLine("Produit retiré du panier !");
+                var response = await client.DeleteAsync($"{baseurl}/api/cart/remove?id={id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Produit retiré du panier !");
+                }
+                else
+                {
+                    Console.WriteLine($"Échec du retrait du panier. Code d'état : {response.StatusCode}");
+                }
             }
             else
             {
-                Console.WriteLine($"Échec du retrait du panier. Code d'état : {response.StatusCode}");
+                Console.WriteLine("Format d'ID invalide. Veuillez saisir un GUID valide.");
             }
         }
+
+
+
 
         static async Task RunEmptyCartAsync()
         {
@@ -344,7 +368,7 @@ namespace ibaycli
             Guid id;
             if (Guid.TryParse(Console.ReadLine(), out id))
             {
-                var response = await client.DeleteAsync($"{baseurl}/api/product/delete?Id={id}");
+                var response = await client.DeleteAsync($"{baseurl}/api/product/delete?id={id}");
                 if (response.IsSuccessStatusCode)
                 {
                     Console.WriteLine("Suppression réussie !");
