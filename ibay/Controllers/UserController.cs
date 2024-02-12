@@ -190,8 +190,49 @@ namespace ibay.Controllers
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             cart.UserId = new Guid(userId);
-            //ibay.AddToCart(cart);
+            ibay.AddToCart(cart);
             return Ok();
+        }
+        
+        [HttpDelete]
+        [Authorize]
+        [Route("remove")]
+
+        public IActionResult remove(IIbay ibay, [FromBody] ItemId cart)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ibay.RemoveFromCart(userId,cart.Id);
+            return Ok();
+        }
+        
+        [HttpDelete]
+        [Authorize]
+        [Route("empty")]
+        public IActionResult EmptyCart(IIbay ibay)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ibay.EmptyCart(userId);
+            return Ok();
+        }
+        
+        [HttpPost]
+        [Authorize]
+        [Route("pay")]
+        public IActionResult PayCart(IIbay ibay)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            ibay.EmptyCart(userId);
+            return Ok();
+        }
+        
+        [HttpGet]
+        [Authorize]
+        [Route("list")]
+        public IActionResult GetCartItems(IIbay ibay)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var cartItems = ibay.GetCartItems(userId);
+            return Ok(cartItems);
         }
     }
 

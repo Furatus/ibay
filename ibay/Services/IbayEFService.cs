@@ -129,8 +129,58 @@ public class IbayEfService : IIbay
         return query;
     }
 
-    public void addToCart(Guid userId, Guid productId) {
-        
+    public Guid AddToCart(Cart cart)
+    {
+        cart.id = new Guid();
+
+        this.ibayContext.Carts.Add(cart);
+        this.ibayContext.SaveChanges();
+
+        return cart.id;
+    }
+
+    public void RemoveFromCart(string userId, Guid productId)
+    {
+        var cartItem = this.ibayContext.Carts.SingleOrDefault(c => c.UserId == new Guid(userId) && c.ProductId == productId);
+        if (cartItem == null) throw new Exception("The product is not in your cart");
+
+        this.ibayContext.Remove(cartItem);
+        this.ibayContext.SaveChanges();
+    }
+
+    public void EmptyCart(string userId)
+    {
+        var cartItems = this.ibayContext.Carts.Where(c => c.UserId == new Guid(userId)).ToList();
+
+        if (cartItems.Any())
+        {
+            this.ibayContext.Carts.RemoveRange(cartItems);
+            this.ibayContext.SaveChanges();
+        }
     }
     
+    public void PayCart(string userId)
+    {
+        var cartItems = this.ibayContext.Carts.Where(c => c.UserId == new Guid(userId)).ToList();
+
+        if (cartItems.Any())
+        {
+            this.ibayContext.Carts.RemoveRange(cartItems);
+            this.ibayContext.SaveChanges();
+        }
+    }
+    
+    public List<Product> GetCartItems(string userId)
+    {
+        var cartItems = this.ibayContext.Carts
+            .Where(c => c.UserId == new Guid(userId))
+            .Select(c => c.ProductId)
+            .ToList();
+
+        var productsInCart = this.ibayContext.Products
+            .Where(p => cartItems.Contains(p.Id))
+            .ToList();
+
+        return productsInCart;
+    }
 }
