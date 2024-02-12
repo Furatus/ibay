@@ -1,0 +1,6 @@
+﻿services:
+  ibay:
+    image: ibay
+    build:
+      context: .
+      dockerfile: ibay/Dockerfile

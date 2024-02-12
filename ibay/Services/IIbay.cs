@@ -15,5 +15,11 @@ namespace ibay.Services
         public void DeleteProduct(Guid id);
         public IQueryable<Product>? GetProducts(ProductSorting sorting);
         public IQueryable<Product>? SearchProducts(ProductSearch search);
+        public Guid AddToCart(Cart cart);
+        public void RemoveFromCart(string userId, Guid productId);
+        public void EmptyCart(string userId);
+        public void PayCart(string userId);
+
+        public List<Product> GetCartItems(string userId);
     }
 }
