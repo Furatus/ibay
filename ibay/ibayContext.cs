@@ -11,7 +11,7 @@ public class IbayContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(@"Host=192.168.242.135;Database=ibay_api;Username=postgres;Password=postgres");
+        optionsBuilder.UseNpgsql(@Env.dbString);
         base.OnConfiguring(optionsBuilder);
 
     }

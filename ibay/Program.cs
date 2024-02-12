@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using dotenv.net;
 using ibay.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -27,7 +28,7 @@ public class Program
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MON6SUPER6SECRET6EST6UN6GRAND6MOT6DE6PASSE6DUNE6TRENTAINE6DE6CARACTERES"))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Env.JwtSecret))
             };
         });
         
@@ -35,6 +36,7 @@ public class Program
             {
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
 
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
                 {

@@ -299,7 +299,7 @@ namespace ibay.Controllers
                 new Claim(ClaimTypes.Role, user.Role)
             };
             var token = jwtAuthService.GenerateToken(
-                "MON6SUPER6SECRET6EST6UN6GRAND6MOT6DE6PASSE6DUNE6TRENTAINE6DE6CARACTERES", claims);
+                Env.JwtSecret, claims);
 
             return Ok(token);
         }
