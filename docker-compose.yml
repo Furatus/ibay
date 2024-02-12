@@ -1,6 +1,37 @@
-﻿services:
+﻿version: "3"
+
+services:
   ibay:
     image: ibay
     build:
       context: .
       dockerfile: ibay/Dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=ibay_api
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+        - postgres
+    networks:
+      - ibay_network
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ibay
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - ibay_network
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+networks:
+    ibay_network:
+      
