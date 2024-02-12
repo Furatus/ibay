@@ -6,11 +6,12 @@ Theres a docker compose file, that runs both the api and the database, and are m
 
 PLEASE ensure to have the .env file before launching the docker compose.
 
-# this file should be containing 3 vars, such as : db_user : {
+# this file should be containing 3 vars, such as : db_user : 
+`
 JWT_SECRET= secret of all the jwt tokens that will run on your api.
 DB_USER : user of the database.
 DB_PASSWORD : password of the database user.
-}
+`
 
 if the docker file doesn't work, commented code is available in the `ibay/env.cs` to run. uncomment it and use your own database if you're using it.
 
