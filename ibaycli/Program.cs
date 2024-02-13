@@ -143,12 +143,13 @@ namespace ibaycli
 
         static async Task RunAddToCartAsync()
         {
-            Console.WriteLine("Saisissez le nom du produit à ajouter au panier :");
-            string productName = Console.ReadLine();
+            Console.WriteLine("Saisissez l'id produit à ajouter au panier :");
+            string productId = Console.ReadLine();
+            
             string jwtContent = File.ReadAllText("jeton.txt");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtContent);
             
-            var addToCartModel = new { productName };
+            var addToCartModel = new { productId };
             var response = await client.PostAsJsonAsync($"{baseurl}/api/cart/add", addToCartModel);
             if (response.IsSuccessStatusCode)
             {
@@ -229,7 +230,14 @@ namespace ibaycli
             if (response.IsSuccessStatusCode)
             {
                 var cartContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(cartContent);
+                if (cartContent == "[]")
+                {
+                    Console.WriteLine("Le panier est vide.");
+                }
+                else
+                {
+                    Console.WriteLine(cartContent);
+                }
                 
             }
             else
@@ -244,9 +252,10 @@ namespace ibaycli
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtContent);
             Console.WriteLine("Saisissez la limite de produits à afficher :");
             int limit = int.Parse(Console.ReadLine());
-            Console.WriteLine("Saisissez le tri des produits (asc/desc) :");
+            Console.WriteLine("Saisissez le tri des produits (Date,Name,Price) :");
             string sort = Console.ReadLine();
-            var response = await client.GetAsync($"{baseurl}/api/product/getall?Limit={limit}&SortBy={sort}");
+            
+            var response = await client.GetAsync($"{baseurl}/api/product/getall?limit={limit}&sortby={sort}");
             if (response.IsSuccessStatusCode)
             {
                 var productsContent = await response.Content.ReadAsStringAsync();
